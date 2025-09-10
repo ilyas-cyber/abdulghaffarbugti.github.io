@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Management</title>
+    <style>
+        /* CSS Styles */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --danger-color: #e74c3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        
+        .upload-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .upload-section h2 {
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+        
+        .articles-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .articles-section h2 {
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+        
+        .article-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .article-card h3 {
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .article-content {
+            margin-bottom: 15px;
+        }
+        
+        .article-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .status-published {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .status-draft {
+            color: #f39c12;
+            font-weight: 600;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-section,
+            .articles-section {
+                padding: 20px;
+            }
+            
+            .article-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Article Management</h1>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section class="upload-section">
+            <h2>Upload New Article</h2>
+            <form id="articleForm">
+                <div class="form-group">
+                    <label for="articleTitle">Title</label>
+                    <input type="text" id="articleTitle" name="articleTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="articleAuthor">Author</label>
+                    <input type="text" id="articleAuthor" name="articleAuthor" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="articleCategory">Category</label>
+                    <select id="articleCategory" name="articleCategory" required>
+                        <option value="">Select a category</option>
+                        <option value="technology">Technology</option>
+                        <option value="design">Design</option>
+                        <option value="business">Business</option>
+                        <option value="lifestyle">Lifestyle</option>
+                        <option value="education">Education</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="articleContent">Content</label>
+                    <textarea id="articleContent" name="articleContent" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="articleImage">Featured Image (optional)</label>
+                    <input type="file" id="articleImage" name="articleImage" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="articleStatus">Status</label>
+                    <select id="articleStatus" name="articleStatus" required>
+                        <option value="published">Publish Immediately</option>
+                        <option value="draft">Save as Draft</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-secondary">Submit Article</button>
+            </form>
+        </section>
+        
+        <section class="articles-section">
+            <h2>Your Articles</h2>
+            
+            <div id="articlesList">
+                <!-- Sample article - in a real app these would be dynamically generated -->
+                <div class="article-card">
+                    <h3>The Future of Web Development</h3>
+                    <div class="article-meta">
+                        <span>By: Jane Doe</span>
+                        <span>Category: Technology</span>
+                        <span>Posted: May 15, 2023</span>
+                        <span class="status-published">Published</span>
+                    </div>
+                    <div class="article-content">
+                        <p>Web development continues to evolve at a rapid pace. With new frameworks and tools emerging regularly, developers must stay adaptable. The rise of AI-assisted coding and no-code platforms is changing the landscape...</p>
+                    </div>
+                    <div class="article-actions">
+                        <button class="btn btn-sm">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+                
+                <div class="article-card">
+                    <h3>Minimalism in Modern Design</h3>
+                    <div class="article-meta">
+                        <span>By: John Smith</span>
+                        <span>Category: Design</span>
+                        <span>Posted: May 10, 2023</span>
+                        <span class="status-draft">Draft</span>
+                    </div>
+                    <div class="article-content">
+                        <p>Minimalism isn't just an aesthetic choice—it's a philosophy that emphasizes simplicity and functionality. In this article, we explore how minimalism influences user experience and why less is often more...</p>
+                    </div>
+                    <div class="article-actions">
+                        <button class="btn btn-sm">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+                
+                <!-- Empty state for when there are no articles -->
+                <!-- <div class="empty-state">
+                    <i>📝</i>
+                    <h3>No Articles Yet</h3>
+                    <p>You haven't uploaded any articles. Use the form above to add your first article!</p>
+                </div> -->
+            </div>
+        </section>
+    </main>
+    
+    <script>
+        // This would be handled by your backend in a real application
+        document.getElementById('articleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const title = document.getElementById('articleTitle').value;
+            const author = document.getElementById('articleAuthor').value;
+            const category = document.getElementById('articleCategory').value;
+            const content = document.getElementById('articleContent').value;
+            const status = document.getElementById('articleStatus').value;
+            
+            // In a real app, you would send this data to your server
+            console.log('Article submitted:', {
+                title,
+                author,
+                category,
+                content,
+                status
+            });
+            
+            // Show success message
+            alert('Article submitted successfully!');
+            
+            // Reset form
+            this.reset();
+            
+            // In a real app, you would refresh the articles list or add the new article to it
+        });
+    </script>
+</body>
+</html>
